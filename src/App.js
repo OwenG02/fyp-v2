@@ -43,7 +43,7 @@ export default function App() {
     </Canvas>
     <div className='absolute centered cursor'>+</div>
     {isMenuVisible && <Menu />}
-    <MidiPlayer />
+  
     </>
   );
 }

@@ -37,6 +37,11 @@ html,body,#root{
 }
 
 .menu {
-  top: 0px;
-  left: 10px;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: 20px;
+  color: black;
+  text-align: center;
+  font: sans-serif;
 }
