@@ -4,11 +4,12 @@ import { useSphere } from "@react-three/cannon";
 import { useEffect, useRef } from "react";
 import { useKeyboard } from "../hooks/useKeyboard";
 
+
 const JUMP_FORCE = 5;
 const SPEED = 5;
 
 export const Player = ({ mode }) => {
-    const { moveBackward, moveForward, moveLeft, moveRight, jump } = useKeyboard();
+    const { moveBackward, moveForward, moveLeft, moveRight, jump } = useKeyboard(mode);
 
     const { camera } = useThree();
     const [ref, api] = useSphere(() => ({
