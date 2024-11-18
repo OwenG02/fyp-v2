@@ -8,21 +8,25 @@ import { useKeyboard } from "../hooks/useKeyboard";
 const JUMP_FORCE = 5;
 const SPEED = 5;
 
-export const Player = ({ mode }) => {
+export const Player = ({ mode, setPlayerPosition }) => {
     const { moveBackward, moveForward, moveLeft, moveRight, jump } = useKeyboard(mode);
 
     const { camera } = useThree();
     const [ref, api] = useSphere(() => ({
         mass: 1,
         type: 'Dynamic',
-        position: [0, 1.6, 10],
+        position: [0, 1.6, 5],
     }));
 
-    // follows sphere position
-    const pos = useRef([0, 0, 0]);
-    useEffect(() => {
-        api.position.subscribe((p) => pos.current = p);
-    }, [api.position]);
+
+     // follows sphere position
+     const pos = useRef([0, 0, 0]);
+     useEffect(() => {
+         api.position.subscribe((p) => {
+             pos.current = p;
+             setPlayerPosition(new Vector3(p[0], p[1], p[2]));
+         });
+     }, [api.position, setPlayerPosition]);
 
     // same for velocity
     const vel = useRef([0, 0, 0]);
