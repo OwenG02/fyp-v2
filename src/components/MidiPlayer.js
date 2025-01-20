@@ -15,12 +15,26 @@ export const MidiPlayer = () => {
                 const synth = new Tone.PolySynth(Tone.Synth).toDestination();
 
                 const events = midi.getMidiEvents();
-                events.forEach((event) => {
+                let currentTime = 0;
+
+                /*events.forEach((event) => {
                     if (event.type === 8) { // Note on
                         const time = event.playTime / 1000;
                         const note = Tone.Frequency(event.param1, 'midi').toNote();
                         const duration = event.param2 / 127; // Velocity as duration
-                        synth.triggerAttackRelease(note, duration, time);
+                        currentTime += time;
+                        synth.triggerAttackRelease(note, duration, currentTime);
+                    }
+                });*/
+
+                events.forEach((event) => {
+                    const time = event.playTime / 1000;
+                    const note = Tone.Frequency(event.param1, 'midi').toNote();
+
+                    if (event.type === 8) { // Note on
+                        synth.triggerAttack(note, currentTime + time);
+                    } else if (event.type === 9) { // Note off
+                        synth.triggerRelease(note, currentTime + time);
                     }
                 });
 

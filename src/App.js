@@ -20,11 +20,11 @@ export default function App() {
 
   useEffect(() => {
     const distance = playerPosition.distanceTo(keysSynthPosition);
-    console.log('Player Position:', playerPosition);
-    console.log('KeysSynth Position:', keysSynthPosition);
-    console.log('Distance:', distance);
+    //console.log('Player Position:', playerPosition);
+    //console.log('KeysSynth Position:', keysSynthPosition);
+    //console.log('Distance:', distance);
     setIsMenuVisible(distance <= 2);
-    console.log('Is Menu Visible:', distance <= 2);
+    //console.log('Is Menu Visible:', distance <= 2);
   }, [playerPosition, keysSynthPosition]);
   return (
     <>
@@ -43,6 +43,7 @@ export default function App() {
     </Canvas>
     <div className='absolute centered cursor'>+</div>
     {isMenuVisible && <Menu />}
+  
   
     </>
   );

@@ -16,14 +16,14 @@ export const KeysSynth = ({setKeysSynthPosition}) => {
     }, [setKeysSynthPosition]);
     
     //bug fixing
-    console.log('GLTF:', gltf);
+    //console.log('GLTF:', gltf);
     const { nodes, materials } = gltf;
     if (!nodes || !materials) {
         console.error('Failed to load GLTF model');
         return null;
     }
-    console.log('Nodes:', nodes);
-    console.log('Materials:', materials);
+    //console.log('Nodes:', nodes);
+    //console.log('Materials:', materials);
     //end bug fixing
 
     
