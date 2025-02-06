@@ -11,7 +11,5 @@ export const useStore= create((set) => ({
         console.log('toggle gamemode');
         set((state) => ({ gamemode: state.gamemode === 'walk' ? 'midi' : 'walk' }));
     },
-    //menu visibility state
-    //isMenuVisible: false,
-    //toggleMenuVisibility: () => set ((state) => ({ isMenuVisible: !state.isMenuVisible })),
+
 }));

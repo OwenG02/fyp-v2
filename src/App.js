@@ -12,6 +12,10 @@ import { KeysSynth } from './components/KeysSynth';
 import { MidiPlayer } from './components/MidiPlayer';
 import { Vector3 } from 'three';
 
+import { useControls } from 'leva';
+
+
+
 export default function App() {
   const mode = useStore((state) => state.gamemode);
   const [playerPosition, setPlayerPosition] = useState(new Vector3());
@@ -20,12 +24,13 @@ export default function App() {
 
   useEffect(() => {
     const distance = playerPosition.distanceTo(keysSynthPosition);
-    //console.log('Player Position:', playerPosition);
-    //console.log('KeysSynth Position:', keysSynthPosition);
-    //console.log('Distance:', distance);
     setIsMenuVisible(distance <= 2);
-    //console.log('Is Menu Visible:', distance <= 2);
   }, [playerPosition, keysSynthPosition]);
+
+  const {speed} = useControls({
+    speed: {value: 1, min: 0, max: 2}
+  })
+
   return (
     <>
     
@@ -43,7 +48,6 @@ export default function App() {
     </Canvas>
     <div className='absolute centered cursor'>+</div>
     {isMenuVisible && <Menu />}
-  
   
     </>
   );
