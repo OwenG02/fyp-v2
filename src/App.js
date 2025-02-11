@@ -1,5 +1,5 @@
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { Canvas} from '@react-three/fiber';
 import { Physics } from '@react-three/cannon';
 import { Ground } from './components/Ground';
@@ -12,7 +12,9 @@ import { KeysSynth } from './components/KeysSynth';
 import { MidiPlayer } from './components/MidiPlayer';
 import { Vector3 } from 'three';
 
-import { useControls } from 'leva';
+import Recorder from './components/Recorder';
+import { Leva, useControls } from 'leva';
+import * as Tone from 'tone';
 
 
 
@@ -22,18 +24,32 @@ export default function App() {
   const [keysSynthPosition, setKeysSynthPosition] = useState(new Vector3());
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
+  const synthRef = useRef(new Tone.PolySynth(Tone.Synth).toDestination());
+  const [isRecording, setIsRecording] = useState(false);
+
   useEffect(() => {
     const distance = playerPosition.distanceTo(keysSynthPosition);
     setIsMenuVisible(distance <= 2);
   }, [playerPosition, keysSynthPosition]);
 
-  const {speed} = useControls({
-    speed: {value: 1, min: 0, max: 2}
-  })
+  const { gamemode, recording } = useControls({
+    gamemode: {
+      options: ['walk', 'midi'],
+      value: mode,
+      onChange: (value) => {
+        useStore.setState({ gamemode: value });
+      },
+    },
+    recording: {
+      value: isRecording,
+      onChange: (value) => {
+        setIsRecording(value);
+      },
+    },
+  });
 
   return (
     <>
-    
     <Canvas>
       <directionalLight position={[0, 10, 10]} intensity={1} />
       
@@ -48,6 +64,7 @@ export default function App() {
     </Canvas>
     <div className='absolute centered cursor'>+</div>
     {isMenuVisible && <Menu />}
+    {synthRef.current && <Recorder synth={synthRef.current} isRecording={isRecording} setIsRecording={setIsRecording} />}
   
     </>
   );

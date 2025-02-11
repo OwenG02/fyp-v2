@@ -159,7 +159,7 @@ export const useKeyboard = (mode) => {
 */
 
 
-//this hook controls the keyboard inputs in different gamemodes 'walk' & 'midi'
+//this hook controls the keyboard inputs in different gamemodes
 import { useCallback, useEffect, useState} from "react"
 import * as Tone from 'tone';
 
