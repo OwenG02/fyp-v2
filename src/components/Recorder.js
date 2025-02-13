@@ -12,7 +12,7 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
 
         const startRecording = async () => {
             if (Tone.context.state !== "running") {
-                await Tone.start(); // Ensure the AudioContext is running
+                await Tone.start();
             }
 
             if (!synth || !recorder) {
@@ -21,17 +21,16 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
             }
 
             try {
-                synth.disconnect(); // Avoid multiple connections
                 synth.connect(recorder);
-                await recorder.start();
                 console.log("Recording started...");
+                await recorder.start();
             } catch (error) {
                 console.error("Error starting recording:", error);
             }
         };
 
         const stopRecording = async () => {
-            if (recorder.state !== "started") {
+            if (!recorder || recorder.state !== "started") {
                 console.warn("Recorder was not started.");
                 return;
             }
@@ -57,16 +56,11 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
 
         if (isRecording) {
             startRecording();
-        } else {
-            stopRecording();
         }
 
         return () => {
-            try {
-                synth.disconnect();
-                synth.connect(Tone.Destination);
-            } catch (error) {
-                console.warn("Error during cleanup:", error);
+            if (isRecording) {
+                stopRecording();
             }
         };
     }, [isRecording, synth, setIsRecording]);
@@ -75,4 +69,3 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
 };
 
 export default Recorder;
-
