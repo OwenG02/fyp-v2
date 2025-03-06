@@ -22,7 +22,7 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
 
             try {
                 synth.connect(recorder);
-                console.log("Recording started...");
+                console.log("Recording started");
                 await recorder.start();
             } catch (error) {
                 console.error("Error starting recording:", error);
@@ -39,7 +39,7 @@ const Recorder = ({ synth, isRecording, setIsRecording }) => {
                 const recording = await recorder.stop();
                 console.log("Recording stopped...");
 
-                // Create download link
+                //download file
                 const url = URL.createObjectURL(recording);
                 const a = document.createElement("a");
                 a.href = url;

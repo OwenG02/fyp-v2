@@ -2,8 +2,9 @@ import create from 'zustand';
 import * as Tone from 'tone';
 
 export const useStore= create((set) => ({
-    //default mode is walk
+    //default mode
     gamemode: 'walk',
+    
     setGamemode: (mode) => set({ gamemode: mode }),
     // toggle between walk and midi mode
     toggleGamemode: async () => {

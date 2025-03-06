@@ -13,7 +13,8 @@ import { Vector3 } from 'three';
 import Recorder from './components/Recorder';
 import { Leva, useControls } from 'leva';
 import * as Tone from 'tone';
-import { useKeyboard } from './hooks/useKeyboard'; // ✅ Ensure this is imported
+import { useKeyboard } from './hooks/useKeyboard'; 
+
 
 export default function App() {
   const mode = useStore((state) => state.gamemode);
@@ -21,10 +22,7 @@ export default function App() {
   const [keysSynthPosition, setKeysSynthPosition] = useState(new Vector3());
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
-  // ✅ Fix: Define isRecording and setIsRecording
   const [isRecording, setIsRecording] = useState(false);
-
-  // ✅ Fix: Properly manage the synth instance
   const synthRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +36,7 @@ export default function App() {
     setIsMenuVisible(distance <= 2);
   }, [playerPosition, keysSynthPosition]);
 
-  // ✅ Fix: Pass the correct recording state to Leva controls
+  //send state to Leva
   useControls({
     gamemode: {
       options: ['walk', 'midi'],
@@ -55,7 +53,7 @@ export default function App() {
     },
   });
 
-  // ✅ Fix: Ensure useKeyboard updates properly when synth changes
+  //ensure useKeyboard gets correct updates for mode and synth
   const actions = useKeyboard(mode, synthRef.current);
 
   return (
@@ -73,8 +71,6 @@ export default function App() {
       </Canvas>
       <div className='absolute centered cursor'>+</div>
       {isMenuVisible && <Menu />}
-      
-      {/* ✅ Ensure the synth is passed correctly */}
       {synthRef.current && <Recorder synth={synthRef.current} isRecording={isRecording} setIsRecording={setIsRecording} />}
     </>
   );
