@@ -5,25 +5,32 @@ import { Ground } from './components/Ground';
 import { Player } from './components/Player';
 import { Menu } from './components/Menu';
 import { FirstPersonCamera } from './components/FirstPersonCamera';
-import { Sky } from '@react-three/drei';
+//import { Sky } from '@react-three/drei';
+import { VaporwaveSky } from './components/VaporwaveSky';
 import { useStore } from './hooks/useStore';
 import { KeysSynth } from './components/KeysSynth';
-import { MidiPlayer } from './components/MidiPlayer';
+import { Bass } from './components/Bass';
 import { Vector3 } from 'three';
 import Recorder from './components/Recorder';
 import { Leva, useControls } from 'leva';
 import * as Tone from 'tone';
 import { useKeyboard } from './hooks/useKeyboard'; 
+import { MidiPlayer } from './components/MidiPlayer';
+
+//import { SettingsMenu } from './components/SettingsMenu';
 
 
 export default function App() {
   const mode = useStore((state) => state.gamemode);
   const [playerPosition, setPlayerPosition] = useState(new Vector3());
   const [keysSynthPosition, setKeysSynthPosition] = useState(new Vector3());
+  const [bassPosition, setBassPosition] = useState(new Vector3());
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const [isRecording, setIsRecording] = useState(false);
   const synthRef = useRef(null);
+
+  //const [isSettingsVisible, setIsSettingsVisible] = useState(false);
 
   useEffect(() => {
     if (!synthRef.current) {
@@ -51,8 +58,20 @@ export default function App() {
         setIsRecording(value);
       },
     },
+    midiPlayback: {
+      label: "MIDI Playback",
+      value: false,
+      onChange: (value) => {
+        if (value) {
+          midiPlayerRef.current?.start();
+        } else {
+          midiPlayerRef.current?.stop();
+        }
+      },
+    },
   });
 
+  const midiPlayerRef = useRef(null);
   //ensure useKeyboard gets correct updates for mode and synth
   const actions = useKeyboard(mode, synthRef.current);
 
@@ -60,15 +79,19 @@ export default function App() {
     <>
       <Canvas>
         <directionalLight position={[0, 10, 10]} intensity={1} />
-        <KeysSynth setKeysSynthPosition={setKeysSynthPosition}/>
-        <Sky sunPosition={[100,100,20]}/>
-        <ambientLight intensity={0.5} />
+        
+        <VaporwaveSky />
+        <ambientLight intensity={0.7} />
         <FirstPersonCamera />
         <Physics>
           <Player mode={mode} setPlayerPosition={setPlayerPosition}/>
           <Ground />
+          <KeysSynth setKeysSynthPosition={setKeysSynthPosition}/>
+          <Bass setBassPosition={setBassPosition}/>
+
         </Physics>
       </Canvas>
+      
       <div className='absolute centered cursor'>+</div>
       {isMenuVisible && <Menu />}
       {synthRef.current && <Recorder synth={synthRef.current} isRecording={isRecording} setIsRecording={setIsRecording} />}
@@ -76,4 +99,4 @@ export default function App() {
   );
 }
 
-
+//<Sky sunPosition={[100,100,20]}/>

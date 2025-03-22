@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as Tone from 'tone';
 import MIDIFile from 'midifile';
 
-export const MidiPlayer = () => {
+/*export const MidiPlayer = () => {
     const fileInputRef = useRef();
 
     const handleFileChange = async (event) => {
@@ -27,6 +27,7 @@ export const MidiPlayer = () => {
                     }
                 });*/
 
+                /*
                 events.forEach((event) => {
                     const time = event.playTime / 1000;
                     const note = Tone.Frequency(event.param1, 'midi').toNote();
@@ -54,5 +55,71 @@ export const MidiPlayer = () => {
                 onChange={handleFileChange}
             />
         </div>
+    );
+};
+*/
+
+import { useControls } from 'leva';
+
+export const MidiPlayer = () => {
+    const fileInputRef = useRef();
+    const synthRef = useRef(new Tone.PolySynth(Tone.Synth).toDestination());
+
+    const { midiPlayback } = useControls({
+        midiPlayback: {
+            label: "MIDI Playback",
+            value: false,
+            onChange: (value) => {
+                if (value) {
+                    fileInputRef.current?.click(); // Trigger file selection
+                }
+            },
+        },
+    });
+
+    useEffect(() => {
+        if (!midiPlayback) {
+            Tone.Transport.stop();
+            Tone.Transport.cancel();
+        }
+    }, [midiPlayback]);
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const midi = new MIDIFile(arrayBuffer);
+            const events = midi.getMidiEvents();
+
+            Tone.Transport.cancel();
+            let currentTime = 0;
+
+            events.forEach((event) => {
+                const time = event.playTime / 1000;
+                const note = Tone.Frequency(event.param1, 'midi').toNote();
+
+                if (event.type === 8) { // Note on
+                    synthRef.current.triggerAttack(note, currentTime + time);
+                } else if (event.type === 9) { // Note off
+                    synthRef.current.triggerRelease(note, currentTime + time);
+                }
+            });
+
+            Tone.Transport.start();
+        } catch (error) {
+            console.error('Error processing MIDI file:', error);
+        }
+    };
+
+    return (
+        <input
+            type="file"
+            accept=".mid,.midi,audio/midi,audio/x-midi"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+        />
     );
 };
