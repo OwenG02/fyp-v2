@@ -6,8 +6,8 @@ import * as THREE from "three";
 // Define Custom Shader Material
 const VaporwaveSkyMaterial = shaderMaterial(
   { 
-    topColor: new THREE.Color("#ff99ff"), // Soft pink starting color
-    bottomColor: new THREE.Color("#222266") // Deep navy blue
+    topColor: new THREE.Color("#222266"), // Dark navy (now at the top)
+    bottomColor: new THREE.Color("#ff99ff") // Soft pink (now at the bottom)
   },
   `
   varying vec3 vPos;
@@ -21,8 +21,8 @@ const VaporwaveSkyMaterial = shaderMaterial(
   uniform vec3 topColor;
   uniform vec3 bottomColor;
   void main() {
-    float t = (vPos.y + 1.0) * 0.5;
-    gl_FragColor = vec4(mix(bottomColor, topColor, t), 1.0);
+    float t = (vPos.y + 1.0) * 0.5; // Blend factor
+    gl_FragColor = vec4(mix(topColor, bottomColor, t), 1.0); // Swapped order
   }
   `
 );
@@ -36,23 +36,22 @@ export const VaporwaveSky = () => {
         if (ref.current) {
             const time = clock.elapsedTime * 0.1;
 
- 
             const hueValues = [0, 220 / 360, 280 / 360, 330 / 360]; // Red, Blue, Purple, Pink
             const hueIndex = Math.floor(time % hueValues.length);
             const nextHueIndex = (hueIndex + 1) % hueValues.length;
             
-            const mixFactor = time % 1; //smooth transition between hues
+            const mixFactor = time % 1; // Smooth transition between hues
             const hue = THREE.MathUtils.lerp(hueValues[hueIndex], hueValues[nextHueIndex], mixFactor);
             
-            ref.current.uniforms.topColor.value.setHSL(hue, 0.7, 0.6);
+            ref.current.uniforms.bottomColor.value.setHSL(hue, 0.8, 0.7); // Change bottom color dynamically
         }
     });
 
     return (
         <>
-            {/* Sky Sphere */}
-            <mesh scale={[500, 500, 500]}>
-                <sphereGeometry args={[1, 32, 32]} />
+            {/* Sky sphere */}
+            <mesh scale={[500, 500, 500]}  >
+                <sphereGeometry args={[1.5, 32, 32]} />
                 <vaporwaveSkyMaterial ref={ref} side={THREE.BackSide} />
             </mesh>
 

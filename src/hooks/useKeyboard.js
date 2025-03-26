@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import * as Tone from 'tone';
 
 function actionByKey(key) {
     return {
@@ -11,7 +10,6 @@ function actionByKey(key) {
     }[key];
 }
 
-// Function to generate notes dynamically based on the current octave
 const generateNotes = (octave) => ({
     'a': `C${octave}`,
     'w': `C#${octave}`,
@@ -25,10 +23,13 @@ const generateNotes = (octave) => ({
     'h': `A${octave}`,
     'u': `A#${octave}`,
     'j': `B${octave}`,
-    'k': `C${octave + 1}`, // Move to next octave for the highest note
+    'k': `C${octave + 1}`,
+    'o': `C#${octave + 1}`,
+    'l': `D${octave + 1}`,
+    'p': `D#${octave + 1}`,
 });
 
-export const useKeyboard = (mode, synth) => {
+export const useKeyboard = (mode, instrument,activeInstrument) => {
     const [actions, setActions] = useState({
         moveForward: false,
         moveBackward: false,
@@ -45,6 +46,15 @@ export const useKeyboard = (mode, synth) => {
         setNotes(generateNotes(octave));
     }, [octave]);
 
+    // Update octave when activeInstrument changes
+    useEffect(() => {
+        if (activeInstrument) {
+            // Change octave based on instrument type
+            setOctave(activeInstrument === 'bass' ? 2 : 4);
+        }
+    }, [activeInstrument]);
+
+    //this fixes some bug where the player would keep moving after switching gamamodes
     const resetMovement = useCallback(() => {
         setActions({
             moveForward: false,
@@ -62,11 +72,10 @@ export const useKeyboard = (mode, synth) => {
     }, [mode, resetMovement]);
 
     const handleKeyDown = useCallback((e) => {
-        if (mode === 'midi' && synth) {
+        if (mode === 'midi' && instrument) {
             if (e.key === 'z') {
                 setOctave((prev) => {
                     const newOctave = Math.max(prev - 1, 1);
-                    console.log(`Octave decreased: ${newOctave}`);
                     return newOctave;
                 });
                 return;
@@ -74,7 +83,6 @@ export const useKeyboard = (mode, synth) => {
             if (e.key === 'x') {
                 setOctave((prev) => {
                     const newOctave = Math.min(prev + 1, 7);
-                    console.log(`Octave increased: ${newOctave}`);
                     return newOctave;
                 });
                 return;
@@ -83,7 +91,7 @@ export const useKeyboard = (mode, synth) => {
             const note = notes[e.key];
             if (note) {
                 console.log(`Playing note: ${note}`);
-                synth.triggerAttackRelease(note, '8n');
+                instrument.triggerAttackRelease(note, '8n');
             }
         } else if (mode === 'walk') {
             const action = actionByKey(e.code);
@@ -94,7 +102,7 @@ export const useKeyboard = (mode, synth) => {
                 }));
             }
         }
-    }, [mode, synth, notes]);
+    }, [mode, instrument, notes]);
 
     const handleKeyUp = useCallback((e) => {
         if (mode === 'walk') {
@@ -106,7 +114,7 @@ export const useKeyboard = (mode, synth) => {
                 }));
             }
         }
-    }, [mode]);
+    }, [mode, instrument, notes]);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);

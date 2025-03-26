@@ -5,7 +5,6 @@ import { Ground } from './components/Ground';
 import { Player } from './components/Player';
 import { Menu } from './components/Menu';
 import { FirstPersonCamera } from './components/FirstPersonCamera';
-//import { Sky } from '@react-three/drei';
 import { VaporwaveSky } from './components/VaporwaveSky';
 import { useStore } from './hooks/useStore';
 import { KeysSynth } from './components/KeysSynth';
@@ -17,9 +16,6 @@ import * as Tone from 'tone';
 import { useKeyboard } from './hooks/useKeyboard'; 
 import { MidiPlayer } from './components/MidiPlayer';
 
-//import { SettingsMenu } from './components/SettingsMenu';
-
-
 export default function App() {
   const mode = useStore((state) => state.gamemode);
   const [playerPosition, setPlayerPosition] = useState(new Vector3());
@@ -30,18 +26,44 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const synthRef = useRef(null);
 
-  //const [isSettingsVisible, setIsSettingsVisible] = useState(false);
+  //new
+  const bassRef = useRef(null);
+  const[activeInstrument, setActiveInstrument] = useState('null');
+
 
   useEffect(() => {
     if (!synthRef.current) {
       synthRef.current = new Tone.PolySynth(Tone.Synth).toDestination();
     }
+    if (!bassRef.current) {
+      bassRef.current = new Tone.MonoSynth({
+        oscillator: { type: "square" },
+        filter: { Q: 4, type: "lowpass", rolloff: -24 },
+        envelope: { attack: 0.1, decay: 0.3, sustain: 0.7, release: 1.2 },
+      }).toDestination();
+    }
   }, []);
 
+  //check if player is near synth or bass
   useEffect(() => {
-    const distance = playerPosition.distanceTo(keysSynthPosition);
-    setIsMenuVisible(distance <= 2);
-  }, [playerPosition, keysSynthPosition]);
+    const distanceToKeys = playerPosition.distanceTo(keysSynthPosition);
+    const distanceToBass = playerPosition.distanceTo(bassPosition);
+  
+    setIsMenuVisible(distanceToKeys <= 2 || distanceToBass <= 2);
+    if (mode === 'midi') {
+      if (distanceToKeys <= 2) {
+        setActiveInstrument(synthRef.current);
+      } else if (distanceToBass <= 2) {
+        setActiveInstrument(bassRef.current);
+      } else {
+        setActiveInstrument(null);
+      }
+    } else {
+      setActiveInstrument(null);
+    }
+  }, [mode, playerPosition, keysSynthPosition, bassPosition]);
+
+  
 
   //send state to Leva
   useControls({
@@ -58,22 +80,16 @@ export default function App() {
         setIsRecording(value);
       },
     },
-    midiPlayback: {
-      label: "MIDI Playback",
-      value: false,
-      onChange: (value) => {
-        if (value) {
-          midiPlayerRef.current?.start();
-        } else {
-          midiPlayerRef.current?.stop();
-        }
-      },
-    },
+    
+  
   });
+
 
   const midiPlayerRef = useRef(null);
   //ensure useKeyboard gets correct updates for mode and synth
-  const actions = useKeyboard(mode, synthRef.current);
+  //const actions = useKeyboard(mode, activeInstrument);
+  const actions = useKeyboard(mode, activeInstrument, activeInstrument ? (activeInstrument === synthRef.current ? 'synth' : 'bass') : null);
+
 
   return (
     <>
@@ -94,9 +110,7 @@ export default function App() {
       
       <div className='absolute centered cursor'>+</div>
       {isMenuVisible && <Menu />}
-      {synthRef.current && <Recorder synth={synthRef.current} isRecording={isRecording} setIsRecording={setIsRecording} />}
+      {activeInstrument && <Recorder synth={activeInstrument} isRecording={isRecording} setIsRecording={setIsRecording} />}
     </>
   );
 }
-
-//<Sky sunPosition={[100,100,20]}/>
