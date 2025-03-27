@@ -90,7 +90,7 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
 
             const note = notes[e.key];
             if (note) {
-                console.log(`Playing note: ${note}`);
+                console.log(`${note}`);
                 instrument.triggerAttackRelease(note, '8n');
             }
         } else if (mode === 'walk') {

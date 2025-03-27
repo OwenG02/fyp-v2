@@ -14,19 +14,22 @@ import Recorder from './components/Recorder';
 import { Leva, useControls } from 'leva';
 import * as Tone from 'tone';
 import { useKeyboard } from './hooks/useKeyboard'; 
+import WaveformPlayer from './components/WaveformPlayer';
+
 import { MidiPlayer } from './components/MidiPlayer';
+
 
 export default function App() {
   const mode = useStore((state) => state.gamemode);
   const [playerPosition, setPlayerPosition] = useState(new Vector3());
   const [keysSynthPosition, setKeysSynthPosition] = useState(new Vector3());
   const [bassPosition, setBassPosition] = useState(new Vector3());
+
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-
   const [isRecording, setIsRecording] = useState(false);
-  const synthRef = useRef(null);
+  const [isWaveformVisible, setIsWaveformVisible] = useState(false);
 
-  //new
+  const synthRef = useRef(null);
   const bassRef = useRef(null);
   const[activeInstrument, setActiveInstrument] = useState('null');
 
@@ -80,6 +83,13 @@ export default function App() {
         setIsRecording(value);
       },
     },
+    showWaveform: {
+      label: 'Track Editor',
+      value: isWaveformVisible,
+      onChange: (value) => {
+        setIsWaveformVisible(value);
+      },
+    }
     
   
   });
@@ -104,11 +114,12 @@ export default function App() {
           <Ground />
           <KeysSynth setKeysSynthPosition={setKeysSynthPosition}/>
           <Bass setBassPosition={setBassPosition}/>
-
         </Physics>
       </Canvas>
       
       <div className='absolute centered cursor'>+</div>
+      
+      {isWaveformVisible && <WaveformPlayer />}
       {isMenuVisible && <Menu />}
       {activeInstrument && <Recorder synth={activeInstrument} isRecording={isRecording} setIsRecording={setIsRecording} />}
     </>

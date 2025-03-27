@@ -41,8 +41,4 @@ export const KeysSynth = ({setKeysSynthPosition}) => {
 //preload model
 useGLTF.preload('/assets/KEYBOARD.gltf');
 
-/*<mesh geometry={nodes.Cubo001.geometry} material={materials['Tasto Nero']} />
-            <mesh geometry={nodes.Cubo001_1.geometry} material={materials['Tasti Bianchi']} 
-            
-            {nodes.Scene && <primitive object={nodes.Scene} />}
-            />*/
+
