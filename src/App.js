@@ -22,15 +22,108 @@ export default function App() {
   const [playerPosition, setPlayerPosition] = useState(new Vector3());
   const [keysSynthPosition, setKeysSynthPosition] = useState(new Vector3());
   const [bassPosition, setBassPosition] = useState(new Vector3());
-
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isWaveformVisible, setIsWaveformVisible] = useState(false);
+
+  const [audioContext, setAudioContext] = useState(null);
+  const [isAudioContextInitialized, setIsAudioContextInitialized] = useState(false);
 
   const synthRef = useRef(null);
   const bassRef = useRef(null);
   const[activeInstrument, setActiveInstrument] = useState('null');
 
+  // Function to initialize the AudioContext
+  const initializeAudioContext = () => {
+    if (!audioContext) {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      setAudioContext(context);
+      setIsAudioContextInitialized(true);
+      console.log("AudioContext initialized");
+    }
+  };
+
+  // Function to resume the AudioContext if suspended
+  const resumeAudioContext = () => {
+    if (audioContext && audioContext.state === 'suspended') {
+      audioContext.resume();
+      console.log("AudioContext resumed");
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener to start AudioContext on any user interaction (click, keyboard, or MIDI)
+    const startAudioOnUserInput = () => {
+      initializeAudioContext();
+      document.removeEventListener('click', startAudioOnUserInput); // Remove listener after initialization
+      document.removeEventListener('keydown', startAudioOnUserInput); // Remove listener after initialization
+    };
+
+    // Listen for click or keydown events
+    document.addEventListener('click', startAudioOnUserInput);
+    document.addEventListener('keydown', startAudioOnUserInput);
+
+    // Listen for MIDI input to act as a user gesture for audio context initialization
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then((midiAccess) => {
+        midiAccess.inputs.forEach((input) => {
+          input.onmidimessage = () => {
+            initializeAudioContext(); // Initialize on MIDI message
+          };
+        });
+      });
+    }
+
+    // Cleanup event listeners when the component unmounts
+    return () => {
+      document.removeEventListener('click', startAudioOnUserInput);
+      document.removeEventListener('keydown', startAudioOnUserInput);
+    };
+  }, [audioContext]);
+
+  
+  /*pointer lock error handling
+  const [isPointerLocked, setIsPointerLocked] = useState(false);
+  const lockPointer = async () => {
+    try {
+      await document.getElementById('canvas').requestPointerLock();
+    } catch (error) {
+      console.warn('Pointer lock request failed:', error);
+    }
+  };
+  
+  const handlePointerLockChange = () => {
+    if (document.pointerLockElement) {
+      setIsPointerLocked(true);
+    } else {
+      setIsPointerLocked(false);
+      lockPointer();
+    }
+  };
+  
+  const handlePointerLockError = (event) => {
+    console.warn('Pointer lock error caught:', event);
+    setIsPointerLocked(false);
+  
+    setTimeout(() => {
+      lockPointer();
+    }, 1000); 
+  };
+  
+  useEffect(() => {
+
+    document.addEventListener('pointerlockchange', handlePointerLockChange);
+    document.addEventListener('pointerlockerror', handlePointerLockError);
+  
+
+    return () => {
+      document.removeEventListener('pointerlockchange', handlePointerLockChange);
+      document.removeEventListener('pointerlockerror', handlePointerLockError);
+    };
+  }, []);
+
+  //end pointer lock
+  */
 
   useEffect(() => {
     if (!synthRef.current) {
@@ -116,3 +209,4 @@ export default function App() {
     </>
   );
 }
+

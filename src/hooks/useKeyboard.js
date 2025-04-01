@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import * as Tone from 'tone';
 
 function actionByKey(key) {
     return {
@@ -40,6 +41,16 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
 
     const [octave, setOctave] = useState(4);
     const [notes, setNotes] = useState(generateNotes(4));
+
+   /* useEffect(() => {
+        const startAudioContext = async () => {
+            if (Tone.context.state !== 'running') {
+                await Tone.start();
+            }
+        };
+        startAudioContext();
+    }, []);
+    */
 
     // Update notes whenever the octave changes
     useEffect(() => {
