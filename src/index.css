@@ -1,17 +1,4 @@
-/*body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-*/
 html,body,#root{
   width: 100%;
   height: 100%;
@@ -45,3 +32,49 @@ html,body,#root{
   text-align: center;
   font: sans-serif;
 }
+.waveform-player {
+  position: absolute;
+  bottom: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 25%;
+  width: 80%;
+  max-width: 800px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid #ff00ff;
+  box-shadow: 0px 0px 15px #ff00ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input {
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.waveform-container {
+  width: 100%;  
+  height: 100%;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-pause-button {
+  background: #ff00ff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  align-self: center;
+}
+
+.play-pause-button:hover {
+  background: #00ffff;
+}
+  

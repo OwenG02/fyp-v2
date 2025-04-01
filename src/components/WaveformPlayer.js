@@ -1,20 +1,34 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import { useControls } from 'leva';
+import '../index.css';
 
 const WaveformPlayer = () => {
     const [waveSurfer, setWaveSurfer] = useState(null);
     const fileInputRef = useRef();
     const containerRef = useRef();
 
+    //Leva controls
+    const { transparency } = useControls("Waveform Player", {
+        transparency: { value: 0.65, min: 0, max: 1, step: 0.05 }
+    });
+
     useEffect(() => {
         if (containerRef.current) {
+            console.log("Container Width:", containerRef.current.offsetWidth);
+            console.log("Container Height:", containerRef.current.offsetHeight);
             const ws = WaveSurfer.create({
+                
                 container: containerRef.current,
-                waveColor: '#fff',
-                progressColor: '#ff00ff',
+                waveColor: '#ff00ff',
+                progressColor: '#00ffff',
                 cursorColor: '#ff00ff',
-                barWidth: 2,
-                height: 100,
+                barWidth: 3,
+                height: (containerRef.current.offsetHeight - 20),
+                width: (containerRef.current.offsetWidth - 20),
+                responsive: true,
+                fillParent: true,
             });
             setWaveSurfer(ws);
         }
@@ -35,13 +49,29 @@ const WaveformPlayer = () => {
     };
 
     return (
-        // Ensure this is rendered outside the Canvas
-        <div style={{ position: 'absolute', top: 10, left: 10, width: '300px', background: '#222', padding: '10px', borderRadius: '5px' }}>
-            <input type="file" accept="audio/wav" ref={fileInputRef} onChange={handleFileChange} />
-            <div ref={containerRef}></div>
-            <button onClick={() => waveSurfer.playPause()}>Play / Pause</button>
+        <div 
+            className="waveform-player"
+            style={{ background: `rgba(34, 0, 51, ${transparency})` }} 
+        >
+            <input 
+                type="file" 
+                accept="audio/wav" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                className="file-input"
+            />
+            
+            <div ref={containerRef} className="waveform-container"></div>
+            
+            <button 
+                onClick={() => waveSurfer.playPause()} 
+                className="play-pause-button"
+            >
+                Play / Pause
+            </button>
         </div>
     );
 };
 
 export default WaveformPlayer;
+

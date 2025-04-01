@@ -125,5 +125,53 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
         };
     }, [handleKeyDown, handleKeyUp]);
 
+    // MIDI Input Handling
+    useEffect(() => {
+        if (!navigator.requestMIDIAccess) {
+            console.warn('Web MIDI API is not supported in this browser.');
+            return;
+        }
+    
+        let midiAccess = null;
+    
+        const midiNoteToPitch = (midiNote) => {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const octave = Math.floor(midiNote / 12) - 1;  // MIDI octaves start from -1
+            const note = noteNames[midiNote % 12];
+            return `${note}${octave}`;
+        };
+    
+        const handleMIDIMessage = (event) => {
+            const [status, note, velocity] = event.data;
+    
+            if (status === 144 && velocity > 0) { // MIDI Note On
+                const noteName = midiNoteToPitch(note); // Convert MIDI note number to note name
+                console.log(`MIDI Note On: ${noteName}`);
+    
+                if (mode === 'midi' && instrument) {
+                    instrument.triggerAttackRelease(noteName, '8n'); // Play correct note
+                }
+            } else if (status === 128 || (status === 144 && velocity === 0)) { // MIDI Note Off
+                console.log(`MIDI Note Off: ${midiNoteToPitch(note)}`);
+            }
+        };
+    
+        navigator.requestMIDIAccess().then((access) => {
+            midiAccess = access;
+            for (let input of midiAccess.inputs.values()) {
+                input.onmidimessage = handleMIDIMessage;
+            }
+        }).catch((err) => console.error('MIDI access failed:', err));
+    
+        return () => {
+            if (midiAccess) {
+                for (let input of midiAccess.inputs.values()) {
+                    input.onmidimessage = null;
+                }
+            }
+        };
+    }, [mode, instrument]);
+
     return actions;
-};
+}
+export default useKeyboard;

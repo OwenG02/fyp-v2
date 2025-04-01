@@ -16,8 +16,6 @@ import * as Tone from 'tone';
 import { useKeyboard } from './hooks/useKeyboard'; 
 import WaveformPlayer from './components/WaveformPlayer';
 
-import { MidiPlayer } from './components/MidiPlayer';
-
 
 export default function App() {
   const mode = useStore((state) => state.gamemode);
@@ -70,14 +68,8 @@ export default function App() {
 
   //send state to Leva
   useControls({
-    gamemode: {
-      options: ['walk', 'midi'],
-      value: mode,
-      onChange: (value) => {
-        useStore.setState({ gamemode: value });
-      },
-    },
     recording: {
+      label: 'Record',
       value: isRecording,
       onChange: (value) => {
         setIsRecording(value);
@@ -94,10 +86,7 @@ export default function App() {
   
   });
 
-
-  const midiPlayerRef = useRef(null);
   //ensure useKeyboard gets correct updates for mode and synth
-  //const actions = useKeyboard(mode, activeInstrument);
   const actions = useKeyboard(mode, activeInstrument, activeInstrument ? (activeInstrument === synthRef.current ? 'synth' : 'bass') : null);
 
 
@@ -116,6 +105,8 @@ export default function App() {
           <Bass setBassPosition={setBassPosition}/>
         </Physics>
       </Canvas>
+
+  
       
       <div className='absolute centered cursor'>+</div>
       
