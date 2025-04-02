@@ -42,15 +42,23 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
     const [octave, setOctave] = useState(4);
     const [notes, setNotes] = useState(generateNotes(4));
 
-   /* useEffect(() => {
+    // Initialize Tone.js AudioContext with low latency
+    /*useEffect(() => {
         const startAudioContext = async () => {
             if (Tone.context.state !== 'running') {
+                // Create a new Tone.js Context with low latency
+                Tone.context = new Tone.Context({
+                    latencyHint: 'interactive', // Low latency for real-time audio
+                    sampleRate: 44100, // Standard sample rate
+                });
+
                 await Tone.start();
+                Tone.Transport.start(); // Start the transport
+                console.log('AudioContext started with low latency');
             }
         };
         startAudioContext();
-    }, []);
-    */
+    }, []);*/
 
     // Update notes whenever the octave changes
     useEffect(() => {

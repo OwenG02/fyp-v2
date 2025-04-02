@@ -36,13 +36,17 @@ export default function App() {
   // Function to initialize the AudioContext
   const initializeAudioContext = () => {
     if (!audioContext) {
-      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const context = new (window.AudioContext || window.webkitAudioContext)({
+        latencyHint: 'interactive', // Low latency
+        sampleRate: 22050, 
+      });
       setAudioContext(context);
       setIsAudioContextInitialized(true);
       console.log("AudioContext initialized");
     }
   };
 
+  /*
   // Function to resume the AudioContext if suspended
   const resumeAudioContext = () => {
     if (audioContext && audioContext.state === 'suspended') {
@@ -50,16 +54,16 @@ export default function App() {
       console.log("AudioContext resumed");
     }
   };
+  */
 
   useEffect(() => {
-    // Add event listener to start AudioContext on any user interaction (click, keyboard, or MIDI)
+    // Add event listener to start AudioContext on any user interaction
     const startAudioOnUserInput = () => {
       initializeAudioContext();
-      document.removeEventListener('click', startAudioOnUserInput); // Remove listener after initialization
-      document.removeEventListener('keydown', startAudioOnUserInput); // Remove listener after initialization
+      document.removeEventListener('click', startAudioOnUserInput); 
+      document.removeEventListener('keydown', startAudioOnUserInput); 
     };
 
-    // Listen for click or keydown events
     document.addEventListener('click', startAudioOnUserInput);
     document.addEventListener('keydown', startAudioOnUserInput);
 
@@ -68,13 +72,12 @@ export default function App() {
       navigator.requestMIDIAccess().then((midiAccess) => {
         midiAccess.inputs.forEach((input) => {
           input.onmidimessage = () => {
-            initializeAudioContext(); // Initialize on MIDI message
+            initializeAudioContext(); 
           };
         });
       });
     }
 
-    // Cleanup event listeners when the component unmounts
     return () => {
       document.removeEventListener('click', startAudioOnUserInput);
       document.removeEventListener('keydown', startAudioOnUserInput);
