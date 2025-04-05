@@ -217,6 +217,7 @@ export default function App() {
     },
   });
 
+  //bass
   const bassControls = useControls('Bass', {
     oscillatorType: {
       options: ['sine', 'square', 'triangle', 'sawtooth'],

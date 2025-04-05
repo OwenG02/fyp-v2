@@ -153,7 +153,7 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
                 if (mode === 'midi' && instrument) {
                     instrument.triggerAttackRelease(noteName, '8n'); // Play correct note
                 }
-            } else if (status === 128 || (status === 144 && velocity === 0)) { // MIDI Note Off
+            } else if (status === 128 || (status === 144 && velocity === 0)) {
                 console.log(`MIDI Note Off: ${midiNoteToPitch(note)}`);
             }
         };
