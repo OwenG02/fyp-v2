@@ -1,0 +1,101 @@
+
+html,body,#root{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.centered{
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+}
+
+.absolute{
+  position: absolute;
+}
+
+.cursor{
+  color: lightgray;
+  font-size: 30px;
+}
+
+.menu {
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: 20px;
+  color: black;
+  text-align: center;
+  font: sans-serif;
+}
+.waveform-player {
+  position: absolute;
+  bottom: 65%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 25%;
+  width: 80%;
+  max-width: 800px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid #ff00ff;
+  box-shadow: 0px 0px 15px #ff00ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input {
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.waveform-container {
+  width: 100%;  
+  height: 100%;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-pause-button {
+  background: #ff00ff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  align-self: center;
+}
+
+.play-pause-button:hover {
+  background: #00ffff;
+}
+  
+.pointerlock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Prevent blocking interactions with the canvas */
+  z-index: 9999;
+  font-size: 18px;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.pointerlock-overlay p {
+  text-align: center;
+  margin: 0;
+}
