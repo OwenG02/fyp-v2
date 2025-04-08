@@ -26,6 +26,9 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [isWaveformVisible, setIsWaveformVisible] = useState(false);
 
+  const [currentNote, setCurrentNote] = useState('');
+
+
   const [audioContext, setAudioContext] = useState(null);
   const [isAudioContextInitialized, setIsAudioContextInitialized] = useState(false);
 
@@ -310,7 +313,13 @@ export default function App() {
   });
 
   //ensure useKeyboard gets correct updates for mode and synth
-  const actions = useKeyboard(mode, activeInstrument, activeInstrument ? (activeInstrument === synthRef.current ? 'synth' : 'bass') : null);
+  useKeyboard(mode, activeInstrument, activeInstrument ? (activeInstrument === synthRef.current ? 'synth' : 'bass') : null,setCurrentNote);
+
+
+
+
+
+
 
 
   return (
@@ -336,6 +345,23 @@ export default function App() {
       {isWaveformVisible && <WaveformPlayer />}
       {isMenuVisible && <Menu />}
       {activeInstrument && <Recorder synth={activeInstrument} isRecording={isRecording} setIsRecording={setIsRecording} />}
+      {mode === 'midi' && currentNote && (
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+       fontSize: '2rem',
+       background: 'rgba(0,0,0,0.6)',
+       color: 'white',
+       padding: '10px 20px',
+       borderRadius: '10px',
+       zIndex: 1000,
+     }}>
+       🎹 {currentNote}
+      </div>
+)}
+
     </>
   );
 }

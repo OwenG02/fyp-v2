@@ -30,7 +30,7 @@ const generateNotes = (octave) => ({
     'p': `D#${octave + 1}`,
 });
 
-export const useKeyboard = (mode, instrument,activeInstrument) => {
+export const useKeyboard = (mode, instrument,activeInstrument, onNotePlayed) => {
     const [actions, setActions] = useState({
         moveForward: false,
         moveBackward: false,
@@ -48,10 +48,9 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
         setNotes(generateNotes(octave));
     }, [octave]);
 
-    // Update octave when activeInstrument changes
     useEffect(() => {
         if (activeInstrument) {
-            // Change octave based on instrument type
+            // lower octave if instrument is bass
             setOctave(activeInstrument === 'bass' ? 2 : 4);
         }
     }, [activeInstrument]);
@@ -92,8 +91,10 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
 
             const note = notes[e.key];
             if (note) {
+                //here!!!!
                 console.log(`${note}`);
                 instrument.triggerAttackRelease(note, '8n');
+                if (onNotePlayed) onNotePlayed(note);
             }
         } else if (mode === 'walk') {
             const action = actionByKey(e.code);
@@ -138,7 +139,7 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
     
         const midiNoteToPitch = (midiNote) => {
             const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-            const octave = Math.floor(midiNote / 12) - 1;  // MIDI octaves start from -1
+            const octave = Math.floor(midiNote / 12) - 1; 
             const note = noteNames[midiNote % 12];
             return `${note}${octave}`;
         };
@@ -146,12 +147,13 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
         const handleMIDIMessage = (event) => {
             const [status, note, velocity] = event.data;
     
-            if (status === 144 && velocity > 0) { // MIDI Note On
-                const noteName = midiNoteToPitch(note); // Convert MIDI note number to note name
+            if (status === 144 && velocity > 0) { 
+                const noteName = midiNoteToPitch(note);
                 console.log(`MIDI Note On: ${noteName}`);
     
                 if (mode === 'midi' && instrument) {
-                    instrument.triggerAttackRelease(noteName, '8n'); // Play correct note
+                    instrument.triggerAttackRelease(noteName, '8n'); 
+                    if (onNotePlayed) onNotePlayed(noteName);
                 }
             } else if (status === 128 || (status === 144 && velocity === 0)) {
                 console.log(`MIDI Note Off: ${midiNoteToPitch(note)}`);
@@ -176,4 +178,3 @@ export const useKeyboard = (mode, instrument,activeInstrument) => {
 
     return actions;
 }
-export default useKeyboard;
