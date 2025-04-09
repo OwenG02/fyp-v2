@@ -41,7 +41,7 @@ const WaveformPlayer = () => {
             
 
             regions.clearRegions();
-            // Create some regions at specific time ranges
+            // Create loop region
             ws.on('decode', () => {
                 regions.addRegion({
                     start: 0,
@@ -154,3 +154,4 @@ const WaveformPlayer = () => {
 };
 
 export default WaveformPlayer;
+

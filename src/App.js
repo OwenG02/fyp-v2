@@ -36,7 +36,7 @@ export default function App() {
   const bassRef = useRef(null);
   const[activeInstrument, setActiveInstrument] = useState('null');
 
-  // Function to initialize the AudioContext
+  //initialize the AudioContext
   const initializeAudioContext = () => {
     if (!audioContext) {
       const context = new (window.AudioContext || window.webkitAudioContext)({
