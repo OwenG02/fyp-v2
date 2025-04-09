@@ -4,6 +4,7 @@ import WaveSurfer from 'wavesurfer.js';
 import { useControls } from 'leva';
 import '../index.css';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
+import { wait } from '@testing-library/user-event/dist/utils';
 
 const WaveformPlayer = () => {
     const [waveSurfer, setWaveSurfer] = useState(null);
@@ -37,11 +38,11 @@ const WaveformPlayer = () => {
                 ],
             });
             
-            // Set up event handlers inside useEffect where ws is defined
             
+
+            regions.clearRegions();
             // Create some regions at specific time ranges
             ws.on('decode', () => {
-                // Regions
                 regions.addRegion({
                     start: 0,
                     end: 8,
@@ -70,7 +71,7 @@ const WaveformPlayer = () => {
             });
             
             regions.on('region-clicked', (region, e) => {
-                e.stopPropagation(); // prevent triggering a click on the waveform
+                e.stopPropagation(); 
                 activeRegion = region;
                 region.play(true);
                 region.setOptions({ color: randomColor() });
@@ -81,7 +82,7 @@ const WaveformPlayer = () => {
                 activeRegion = null;
             });
             
-            // Update the zoom level on slider change
+          
             ws.once('decode', () => {
                 document.querySelector('input[type="range"]').oninput = (e) => {
                     const minPxPerSec = Number(e.target.value);
@@ -103,17 +104,23 @@ const WaveformPlayer = () => {
         reader.readAsArrayBuffer(file);
         reader.onload = () => {
             if (waveSurfer) {
+               
+                regions.clearRegions();
+                regions.destroy();
+                waveSurfer.empty();
+      
                 waveSurfer.loadBlob(file);
+        
+
             }
         };
+        
     };
 
     //looping functionality
-    // Give regions a random color when they are created
     const random = (min, max) => Math.random() * (max - min) + min;
     const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`;
 
-    // Toggle looping with a checkbox - this needs to be defined outside useEffect
     let loop = true;
     
     return (
@@ -137,18 +144,9 @@ const WaveformPlayer = () => {
             >
                 Play / Pause
             </button>
-            <label>
-                <input 
-                    type="checkbox" 
-                    defaultChecked={loop} 
-                    onChange={(e) => {
-                        loop = e.target.checked;
-                    }}
-                />
-                Loop regions
-            </label>
+            
 
-            <label>
+            <label style ={{ color: 'pink' }}>
                 Zoom: <input type="range" min="10" max="1000" defaultValue="10" />
             </label>
         </div>

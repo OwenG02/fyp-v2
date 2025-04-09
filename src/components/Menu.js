@@ -20,7 +20,7 @@ export const Menu = () => {
 
 	return (
         <div className="absolute menu">
-		     <p>{gamemode === 'midi' ? 'Press M to Exit' : 'Press M to Play'}</p>
+		     <p>{gamemode === 'midi' ? 'Press M to Exit, Z/X Octave Up/Down' : 'Press M to Play, Z/X Octave Up/Down'}</p>
 	    </div>
     );
 }

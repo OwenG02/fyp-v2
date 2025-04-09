@@ -340,7 +340,7 @@ export default function App() {
 
   
       
-      <div className='absolute centered cursor'>+</div>
+      <div className='absolute centered cursor' style={{ pointerEvents: 'none' }}>+</div>
       
       {isWaveformVisible && <WaveformPlayer />}
       {isMenuVisible && <Menu />}
@@ -357,6 +357,7 @@ export default function App() {
        padding: '10px 20px',
        borderRadius: '10px',
        zIndex: 1000,
+       pointerEvents: 'none',
      }}>
        🎹 {currentNote}
       </div>
